@@ -2,10 +2,18 @@
 
 | Command | Description |
 |----------|--------------|
+| `Import-Module ActiveDirectory` | Imports the Active Directory PowerShell module. |
 | `Get-ADDomain` | Displays information about the current AD domain (SID, functional level, DCs). |
 | `Get-ADForest` | Displays forest-wide information, including trusts. |
 | `nltest /dclist:domain` | Lists all domain controllers. |
 | `nltest /dsgetdc:domain` | Finds a domain controller or global catalog server. |
+
+> If the AD module is missing:
+> ```powershell
+> Add-WindowsFeature RSAT-AD-PowerShell
+> # or (on Windows 10/11)
+> Add-WindowsCapability -Online -Name "Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0"
+> ```
 
 ---
 
@@ -18,7 +26,9 @@
 | `Get-ADGroupMember -Identity "Domain Admins"` | Shows members of the Domain Admins group. |
 | `net user /domain` | Lists domain users (CMD version). |
 | `Get-ADComputer -Filter *` | Lists domain computers and OS information. |
-| `net view \target-machine` | Displays shared folders on a target machine. |
+| `net view \\target-machine` | Displays shared folders on a target machine. |
+| `net localgroup` | Lists all local groups. |
+| `net localgroup "Administrators"` | Lists members of the local Administrators group. |
 
 ---
 
@@ -67,6 +77,7 @@
 | `nltest /dsgetsite` | Shows the site associated with the computer. |
 | `Get-DnsServerZone` | Lists DNS zones (requires permissions). |
 | `Get-DnsServerResourceRecord -ZoneName "domain.local"` | Lists DNS records in a specific zone. |
+| `(Get-CimInstance Win32_OperatingSystem).OSArchitecture` | Displays OS architecture (x64/x86). |
 
 ---
 
@@ -111,3 +122,31 @@
 | `vssadmin list shadows` | Lists existing shadow copies. |
 
 ---
+
+## 12. Sysinternals Utilities
+
+| Tool | Description |
+|-------|-------------|
+| `PsExec \\target cmd` | Run a remote shell on a target system. |
+| `PsLoggedOn \\target` | Show who is logged on to a system. |
+| `AccessChk -uws "DOMAIN\user"` | Check user or group access rights. |
+| `PsInfo \\target` | Get detailed system info remotely. |
+| `PsService \\target query` | List and control services on a remote system. |
+
+---
+
+## 13. PowerShell Remoting and Credentials
+
+### PowerShell Remoting
+```powershell
+Enable-PSRemoting -Force
+Enter-PSSession -ComputerName Server01 -Credential (Get-Credential)
+Invoke-Command -ComputerName Server01 -ScriptBlock { Get-Service }
+```
+
+### Secure Credential Variables
+```powershell
+$Password = Read-Host "Enter Password" -AsSecureString
+$Cred = New-Object System.Management.Automation.PSCredential ("DOMAIN\User", $Password)
+Enter-PSSession -ComputerName Server01 -Credential $Cred
+```
