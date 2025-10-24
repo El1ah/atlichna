@@ -1,4 +1,3 @@
- 
 > Use these LDAP filters with `Get-ADUser -LDAPFilter "<filter>"`, `Get-ADObject -LDAPFilter "<filter>"`, `dsquery * -filter "<filter>" -limit 0`, `ldapsearch -b "DC=domain,DC=com" "<filter>"`, `ldifde -r "<filter>"`, etc.
 
 ---
